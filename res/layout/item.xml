@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:id="@+id/image"
+            android:src="@drawable/ic_launcher"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:layout_margin="10dp"/>
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:text="test"
+                android:textSize="24dp"
+                android:id="@+id/title"
+                android:gravity="center"/>
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp">
+            <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_thumb_up_white_48dp"
+                    android:adjustViewBounds="true"/>
+            <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:id="@+id/likes_string"
+                    android:textSize="20sp"/>
+            <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_alarm_white_48dp"
+                    android:adjustViewBounds="true"/>
+            <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:id="@+id/time_string"/>
+            <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_file_download_white_48dp"
+                    android:id="@+id/downloadButton"/>
+
+        </LinearLayout>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="test"
+                android:textSize="32sp"
+                android:gravity="center"
+                android:id="@+id/avtor"/>
+
+
+    </LinearLayout>
+
+</LinearLayout>
