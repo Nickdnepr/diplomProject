@@ -47,17 +47,28 @@ public class FragmentTab extends Fragment {
         serviceInfo=activity.serviceInfo;
         list = dataBase.getInfo();
         ListView listView = (ListView) getView().findViewById(R.id.downloadList);
-        adapter = new MyAdapter(getActivity(), list);
+        adapter = new MyAdapter(getActivity(), list, true);
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Info info = list.get(position);
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                final Info info = list.get(position);
 
-
+                ImageView downloadButton = (ImageView)view.findViewById(R.id.downloadButton);
+                downloadButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dataBase.deleteInfo(info);
+                        list.remove(position);
+                        refreshList();
+                        Intent pauseIntent = new Intent(getActivity(), MyService.class);
+                        pauseIntent.putExtra("command", "pause");
+                        getActivity().startService(pauseIntent);
+                    }
+                });
 
                 Intent pauseIntent = new Intent(getActivity(), MyService.class);
                 pauseIntent.putExtra("command", "pause");

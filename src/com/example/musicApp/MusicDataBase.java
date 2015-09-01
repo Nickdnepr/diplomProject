@@ -80,7 +80,7 @@ public class MusicDataBase extends SQLiteOpenHelper{
         Calendar c = Calendar.getInstance();
         String seconds = c.get(Calendar.YEAR) + "" + c.get(Calendar.MONTH) + "" + c.get(Calendar.DAY_OF_MONTH) + "" + c.get(Calendar.HOUR_OF_DAY) + "" + c.get(Calendar.MINUTE) + "" + c.get(Calendar.SECOND);
         Log.i("time", seconds);
-        String name = seconds + "";
+        String name = addedInfo.getTitle();
         File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
         File myFile = new File(dir, name + ".mp3");
 
@@ -183,7 +183,10 @@ public class MusicDataBase extends SQLiteOpenHelper{
 
     public void deleteInfo(Info info){
         cursor = musicBase.query("mytable", null, null, null, null, null, null);
-
+        getWritableDatabase().delete("mytable", "streamUrl = ?", new String[]{String.valueOf(info.getStream_url())});
+        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
+        File myFile = new File(dir, info.getTitle() + ".mp3");
+        Log.i("delete",myFile.delete()+"");
     }
 
 

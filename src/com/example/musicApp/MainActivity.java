@@ -1,6 +1,9 @@
 package com.example.musicApp;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
@@ -22,11 +25,20 @@ public class MainActivity extends FragmentActivity {
     MusicDataBase dataBase;
     SettingsAndPlaylist serviceInfo = new SettingsAndPlaylist();
     public boolean needToRefresh = false;
+    BroadcastReceiver receiver;
+    private boolean playing;
+    private boolean repeat;
+    private List playList;
+    private int position;
+    private int currentPosition;
+    private int finalPosition;
+
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         dataBase = new MusicDataBase(this);
 
 
@@ -39,6 +51,19 @@ public class MainActivity extends FragmentActivity {
 //        addTab("t1", SearchFragment.class);
         fragmentTabHost.addTab(fragmentTabHost.newTabSpec("search").setIndicator("search"), SearchFragment.class, null);
         fragmentTabHost.addTab(fragmentTabHost.newTabSpec("download").setIndicator("download"), FragmentTab.class, null);
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("broadcast_for_player");
+        receiver=new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                currentPosition = intent.getIntExtra("currentPosition", 0);
+                finalPosition = intent.getIntExtra("finalPosition", 0);
+                playing = intent.getBooleanExtra("playingStatus", false);
+                checkPlayer();
+            }
+        };
+        registerReceiver(receiver, filter);
 
 
         fragmentTabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
@@ -92,15 +117,53 @@ public class MainActivity extends FragmentActivity {
 
     }
 
-    private void addTab(String tag, Class<?> fragment1Class) {
-        View viev = LayoutInflater.from(this).inflate(R.layout.tab, fragmentTabHost.getTabContentView(), false);
-        TabHost.TabSpec tabspec = fragmentTabHost.newTabSpec(tag).setIndicator(viev);
-        fragmentTabHost.addTab(tabspec, fragment1Class, null);
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        playList = serviceInfo.getPlayList();
+        repeat = serviceInfo.isRepeat();
+        position = serviceInfo.getPosition();
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+
+
+
+    }
+
+
 
 
     public MusicDataBase getDataBase() {
         return dataBase;
+    }
+
+    private void checkPlayer(){
+        if(finalPosition-currentPosition<=750&&repeat&&playing==false){
+            Intent serviceIntent = new Intent(MainActivity.this, MyService.class);
+            serviceIntent.putExtra("command", "repeat");
+            startService(serviceIntent);
+        }
+
+        if(finalPosition-currentPosition<=750&&repeat==false&&playing==false){
+            position=position+1;
+            if(position>=playList.size()){
+                position=position-1;
+            }
+            serviceInfo.setPosition(position);
+            Info tmp = (Info)playList.get(position);
+            String command = tmp.getStream_url()+"?client_id=b45b1aa10f1ac2941910a7f0d10f8e28";
+            if (tmp.getPath_to_file()!=null){
+                command=tmp.getPath_to_file();
+            }
+            Intent serviceIntent = new Intent(MainActivity.this, MyService.class);
+            serviceIntent.putExtra("command", command);
+            startService(serviceIntent);
+        }
     }
 
     public SettingsAndPlaylist getServiceInfo() {

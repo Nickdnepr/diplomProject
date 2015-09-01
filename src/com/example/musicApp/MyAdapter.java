@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -18,9 +19,10 @@ import java.util.List;
 public class MyAdapter extends ArrayAdapter<Info> {
 
 
-
-    public MyAdapter(Context context, List<Info> objects) {
+    private boolean listBoolean;
+    public MyAdapter(Context context, List<Info> objects, boolean  listBoolean) {
         super(context, 0, objects);
+        this.listBoolean=listBoolean;
     }
 
     @Override
@@ -36,7 +38,12 @@ public class MyAdapter extends ArrayAdapter<Info> {
         TextView likes = (TextView)convertView.findViewById(R.id.likes_string);
         TextView duration = (TextView)convertView.findViewById(R.id.time_string);
         TextView avtor = (TextView)convertView.findViewById(R.id.avtor);
+        ImageView downloadButton = (ImageView)convertView.findViewById(R.id.downloadButton);
 
+
+        if(listBoolean){
+            downloadButton.setImageResource(R.drawable.ic_highlight_off_white_48dp);
+        }
 //        Log.i("adapterInfo", item.getTitle());
 //        Log.i("adapterInfo", item.getLikes_count()+"");
 //        Log.i("adapterInfo", item.getDuration()+"");

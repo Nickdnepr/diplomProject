@@ -240,7 +240,16 @@ public class PlayerActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
+        serviceInfo.setPosition(position);
+        serviceInfo.setPlayList(playList);
+        serviceInfo.setRepeat(repeat);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        repeat=serviceInfo.isRepeat();
     }
 
     @Override

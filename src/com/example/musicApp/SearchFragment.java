@@ -68,7 +68,7 @@ public class SearchFragment extends Fragment implements MediaPlayer.OnPreparedLi
         serviceInfo=activity.serviceInfo;
         downloadFragment = (FragmentTab) getFragmentManager().findFragmentByTag("download");
         ListView listView = (ListView) getView().findViewById(R.id.listView);
-        adapter = new MyAdapter(getActivity(), list);
+        adapter = new MyAdapter(getActivity(), list, false);
         listView.setAdapter(adapter);
 
 
@@ -147,6 +147,7 @@ public class SearchFragment extends Fragment implements MediaPlayer.OnPreparedLi
         AndroidHttpClient httpClient = new AndroidHttpClient("http://api.soundcloud.com");
         ParameterMap params = httpClient.newParams()
                 .add("q", requestString)
+                .add("limit", "50")
                 .add("client_id", "b45b1aa10f1ac2941910a7f0d10f8e28");
         httpClient.setMaxRetries(3);
         httpClient.get("/tracks.json", params, new AsyncCallback() {
