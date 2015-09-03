@@ -57,11 +57,11 @@ public class MainActivity extends FragmentActivity {
                 currentPosition = intent.getIntExtra("currentPosition", 0);
                 finalPosition = intent.getIntExtra("finalPosition", 0);
                 playing = intent.getBooleanExtra("playingStatus", false);
-                try {
-                    checkPlayer();
-                } catch (Exception e) {
-                    Log.i("error", e.toString());
-                }
+//                try {
+//                    checkPlayer();
+//                } catch (Exception e) {
+//                    Log.i("error", e.toString());
+//                }
 //                checkPlayer();
 
             }
@@ -114,6 +114,8 @@ public class MainActivity extends FragmentActivity {
 //                playerIntent.putExtra("playlist", );
                 playerIntent.putExtra("dataBase", serviceInfo);
                 startActivity(playerIntent);
+
+
             }
         });
 
@@ -143,40 +145,40 @@ public class MainActivity extends FragmentActivity {
         return dataBase;
     }
 
-    private void checkPlayer() {
-        playList = serviceInfo.getPlayList();
-        repeatMain = serviceInfo.isRepeat();
-        position = serviceInfo.getPosition();
-
-        if (finalPosition - currentPosition <= 750 && repeatMain && active) {
-            Intent pauseIntent = new Intent(MainActivity.this, MyService.class);
-            pauseIntent.putExtra("command", "pause");
-            startService(pauseIntent);
-            Intent serviceIntent = new Intent(MainActivity.this, MyService.class);
-            serviceIntent.putExtra("command", "repeat");
-            startService(serviceIntent);
-        }
-
-        if (finalPosition - currentPosition <= 750 && repeatMain == false && active) {
-            position = position + 1;
-            if (position >= playList.size()) {
-                position = position - 1;
-            }
-            serviceInfo.setPosition(position);
-            Info tmp = (Info) playList.get(position);
-            String command = tmp.getStream_url() + "?client_id=b45b1aa10f1ac2941910a7f0d10f8e28";
-            if (tmp.getPath_to_file() != null) {
-                command = tmp.getPath_to_file();
-            }
-            Intent pauseIntent = new Intent(MainActivity.this, MyService.class);
-            pauseIntent.putExtra("command", "pause");
-            startService(pauseIntent);
-            Intent serviceIntent = new Intent(MainActivity.this, MyService.class);
-            serviceIntent.putExtra("command", command);
-            startService(serviceIntent);
-            Log.i("music", "switched to next");
-        }
-    }
+//    private void checkPlayer() {
+//        playList = serviceInfo.getPlayList();
+//        repeatMain = serviceInfo.isRepeat();
+//        position = serviceInfo.getPosition();
+//
+//        if (finalPosition - currentPosition <= 750 && repeatMain && active) {
+//            Intent pauseIntent = new Intent(MainActivity.this, MyService.class);
+//            pauseIntent.putExtra("command", "pause");
+//            startService(pauseIntent);
+//            Intent serviceIntent = new Intent(MainActivity.this, MyService.class);
+//            serviceIntent.putExtra("command", "repeat");
+//            startService(serviceIntent);
+//        }
+//
+//        if (finalPosition - currentPosition <= 750 && repeatMain == false && active) {
+//            position = position + 1;
+//            if (position >= playList.size()) {
+//                position = position - 1;
+//            }
+//            serviceInfo.setPosition(position);
+//            Info tmp = (Info) playList.get(position);
+//            String command = tmp.getStream_url() + "?client_id=b45b1aa10f1ac2941910a7f0d10f8e28";
+//            if (tmp.getPath_to_file() != null) {
+//                command = tmp.getPath_to_file();
+//            }
+//            Intent pauseIntent = new Intent(MainActivity.this, MyService.class);
+//            pauseIntent.putExtra("command", "pause");
+//            startService(pauseIntent);
+//            Intent serviceIntent = new Intent(MainActivity.this, MyService.class);
+//            serviceIntent.putExtra("command", command);
+//            startService(serviceIntent);
+//            Log.i("music", "switched to next");
+//        }
+//    }
 
     public SettingsAndPlaylist getServiceInfo() {
         return serviceInfo;

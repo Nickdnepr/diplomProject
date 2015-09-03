@@ -10,6 +10,9 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 
+import java.io.IOException;
+import java.util.List;
+
 /**
  * Created by Nick_dnepr on 10.06.2015.
  */
@@ -18,6 +21,10 @@ public class MyService extends Service implements MediaPlayer.OnPreparedListener
     private AudioManager manager;
     private boolean taskController;
     private boolean repeatController;
+    private SettingsAndPlaylist serviceInfo;
+    private List playList;
+    private int position;
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -31,9 +38,16 @@ public class MyService extends Service implements MediaPlayer.OnPreparedListener
         }
 
         String command = intent.getStringExtra("command");
-        if(command==null){
-             return super.onStartCommand(intent, flags, startId);
+        if (command == null) {
+            return super.onStartCommand(intent, flags, startId);
         }
+
+            serviceInfo = (SettingsAndPlaylist) intent.getSerializableExtra("dataBase");
+            position = serviceInfo.getPosition();
+            repeatController = serviceInfo.isRepeat();
+            playList = serviceInfo.getPlayList();
+
+
 //        String url = intent.getStringExtra("url");
         if (command.equals("pause")) {
             player.pause();
@@ -56,35 +70,97 @@ public class MyService extends Service implements MediaPlayer.OnPreparedListener
                 } else {
 
 
-                    if (command.equals("repeat")) {
+                    if (command.equals("forward")) {
 
 //                        if(repeatController)
-
-                        player.seekTo(0);
-                        player.start();
-
+                        position = position + 1;
+                        if (position >= playList.size()) {
+                            position = position - 1;
+                        }
+                        serviceInfo.setPosition(position);
+                        Info tmp = (Info) playList.get(position);
+                        String cmd = tmp.getStream_url() + "?client_id=b45b1aa10f1ac2941910a7f0d10f8e28";
+                        if (tmp.getPath_to_file() != null) {
+                            cmd = tmp.getPath_to_file();
+                        }
+                        try {
+                            player.setDataSource(cmd);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
 
 
                     } else {
-                        try {
-                            player = new MediaPlayer();
-                            player.setAudioStreamType(manager.STREAM_MUSIC);
-                            player.pause();
-                            player.setDataSource(command);
-//                    player.start();
-                            player.setOnPreparedListener(this);
-                            player.prepareAsync();
-                            ProgressTask task = new ProgressTask();
-                            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-                        } catch (Exception e) {
-                            Log.i("uuu", e.toString());
+                        if (command.equals("back")) {
+                            position = position - 1;
+                            serviceInfo.setPosition(position);
+                            if (position < 0) {
+                                position = position + 1;
+                            }
+
+                            Info tmp = (Info) playList.get(position);
+
+                            Log.i("music", "clicked back");
+                            String cmd = tmp.getStream_url() + "?client_id=b45b1aa10f1ac2941910a7f0d10f8e28";
+                            if (tmp.getPath_to_file() != null) {
+                                cmd = tmp.getPath_to_file();
+                            }
+                            try {
+                                player.setDataSource(cmd);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                        } else {
+                            try {
+
+
+                                player = new MediaPlayer();
+                                player.setAudioStreamType(manager.STREAM_MUSIC);
+                                player.pause();
+                                player.setDataSource(command);
+//                    player.start();
+                                player.setOnPreparedListener(this);
+                                player.prepareAsync();
+                                ProgressTask task = new ProgressTask();
+                                task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+                            } catch (Exception e) {
+                                Log.i("uuu", e.toString());
+                            }
                         }
                     }
                 }
 
             }
         }
+
+        player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                if (repeatController) {
+                    mp.seekTo(0);
+                    mp.start();
+                } else {
+                    position = position + 1;
+                    if (position >= playList.size()) {
+                        position = position - 1;
+                    }
+                    serviceInfo.setPosition(position);
+                    Info tmp = (Info) playList.get(position);
+                    String command = tmp.getStream_url() + "?client_id=b45b1aa10f1ac2941910a7f0d10f8e28";
+                    if (tmp.getPath_to_file() != null) {
+                        command = tmp.getPath_to_file();
+                    }
+                    try {
+                        mp.setDataSource(command);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
 
 
         return super.onStartCommand(intent, flags, startId);

@@ -80,6 +80,10 @@ public class FragmentTab extends Fragment {
                 serviceInfo.setPlayList(list);
                 serviceInfo.setPosition(position);
 
+                Intent intent = new Intent(getActivity(), MyService.class);
+                intent.putExtra("command", list.get(position));
+                intent.putExtra("dataBase", serviceInfo);
+                getActivity().startService(intent);
 
 
                 ListTask task = new ListTask();

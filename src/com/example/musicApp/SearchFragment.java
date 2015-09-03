@@ -107,6 +107,10 @@ public class SearchFragment extends Fragment implements MediaPlayer.OnPreparedLi
                 serviceInfo.setPlayList(list);
                 serviceInfo.setPosition(position);
 
+                Intent intent = new Intent(getActivity(), MyService.class);
+                intent.putExtra("command", list.get(position));
+                intent.putExtra("dataBase", serviceInfo);
+                activity.startService(intent);
 
 //                DataBaseTask task = new DataBaseTask();
 //                dataBase.addInfo(list.get(index));
