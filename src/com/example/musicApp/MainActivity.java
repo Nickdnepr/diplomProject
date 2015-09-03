@@ -8,14 +8,11 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TabHost;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends FragmentActivity {
@@ -27,12 +24,12 @@ public class MainActivity extends FragmentActivity {
     public boolean needToRefresh = false;
     BroadcastReceiver receiver;
     private boolean playing;
-    private boolean repeat;
+    private boolean repeatMain = false;
     private List playList;
     private int position;
     private int currentPosition;
     private int finalPosition;
-
+    private boolean active;
 
 
     @Override
@@ -54,13 +51,19 @@ public class MainActivity extends FragmentActivity {
 
         IntentFilter filter = new IntentFilter();
         filter.addAction("broadcast_for_player");
-        receiver=new BroadcastReceiver() {
+        receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 currentPosition = intent.getIntExtra("currentPosition", 0);
                 finalPosition = intent.getIntExtra("finalPosition", 0);
                 playing = intent.getBooleanExtra("playingStatus", false);
-                checkPlayer();
+                try {
+                    checkPlayer();
+                } catch (Exception e) {
+                    Log.i("error", e.toString());
+                }
+//                checkPlayer();
+
             }
         };
         registerReceiver(receiver, filter);
@@ -122,51 +125,67 @@ public class MainActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         playList = serviceInfo.getPlayList();
-        repeat = serviceInfo.isRepeat();
+        repeatMain = serviceInfo.isRepeat();
         position = serviceInfo.getPosition();
+        active = true;
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-
-
+        active = false;
 
 
     }
-
-
 
 
     public MusicDataBase getDataBase() {
         return dataBase;
     }
 
-    private void checkPlayer(){
-        if(finalPosition-currentPosition<=750&&repeat&&playing==false){
+    private void checkPlayer() {
+        playList = serviceInfo.getPlayList();
+        repeatMain = serviceInfo.isRepeat();
+        position = serviceInfo.getPosition();
+
+        if (finalPosition - currentPosition <= 750 && repeatMain && active) {
+            Intent pauseIntent = new Intent(MainActivity.this, MyService.class);
+            pauseIntent.putExtra("command", "pause");
+            startService(pauseIntent);
             Intent serviceIntent = new Intent(MainActivity.this, MyService.class);
             serviceIntent.putExtra("command", "repeat");
             startService(serviceIntent);
         }
 
-        if(finalPosition-currentPosition<=750&&repeat==false&&playing==false){
-            position=position+1;
-            if(position>=playList.size()){
-                position=position-1;
+        if (finalPosition - currentPosition <= 750 && repeatMain == false && active) {
+            position = position + 1;
+            if (position >= playList.size()) {
+                position = position - 1;
             }
             serviceInfo.setPosition(position);
-            Info tmp = (Info)playList.get(position);
-            String command = tmp.getStream_url()+"?client_id=b45b1aa10f1ac2941910a7f0d10f8e28";
-            if (tmp.getPath_to_file()!=null){
-                command=tmp.getPath_to_file();
+            Info tmp = (Info) playList.get(position);
+            String command = tmp.getStream_url() + "?client_id=b45b1aa10f1ac2941910a7f0d10f8e28";
+            if (tmp.getPath_to_file() != null) {
+                command = tmp.getPath_to_file();
             }
+            Intent pauseIntent = new Intent(MainActivity.this, MyService.class);
+            pauseIntent.putExtra("command", "pause");
+            startService(pauseIntent);
             Intent serviceIntent = new Intent(MainActivity.this, MyService.class);
             serviceIntent.putExtra("command", command);
             startService(serviceIntent);
+            Log.i("music", "switched to next");
         }
     }
 
     public SettingsAndPlaylist getServiceInfo() {
         return serviceInfo;
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver);
     }
 }
