@@ -13,10 +13,10 @@ import java.util.List;
 
 public class SettingsAndPlaylist implements Serializable {
     private static final long serialVersionUID = 42L;
-    private  List playList;
-    private  int position;
-    private  boolean repeat;
-    private  boolean random;
+    private  static List playList;
+    private static int position;
+    private static boolean repeat;
+    private static boolean random;
 
 
 
@@ -24,12 +24,12 @@ public class SettingsAndPlaylist implements Serializable {
         Log.i("settings", "testtest");
     }
 
-    public int getPosition() {
+    public static int getPosition() {
         return position;
     }
 
-    public void setPosition(int position) {
-        this.position = position;
+    public static void setPosition(int position) {
+        SettingsAndPlaylist.position = position;
     }
 
     public List getPlayList() {
@@ -37,16 +37,16 @@ public class SettingsAndPlaylist implements Serializable {
         return playList;
     }
 
-    public void setPlayList(List playList) {
-        this.playList = playList;
+    public static void setPlayList(List playList) {
+        SettingsAndPlaylist.playList = playList;
     }
 
-    public  boolean isRepeat() {
+    public static boolean isRepeat() {
         return repeat;
     }
 
-    public  void setRepeat(boolean repeat) {
-        this.repeat = repeat;
+    public static void setRepeat(boolean repeat) {
+        SettingsAndPlaylist.repeat = repeat;
     }
 
     public  boolean isRandom() {

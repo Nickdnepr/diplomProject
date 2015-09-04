@@ -71,18 +71,22 @@ public class FragmentTab extends Fragment {
                     }
                 });
 
-                Intent pauseIntent = new Intent(getActivity(), MyService.class);
-                pauseIntent.putExtra("command", "pause");
-                getActivity().startService(pauseIntent);
-
-                Intent serviceIntent = new Intent(getActivity(), MyService.class);
-                serviceIntent.putExtra("command", info.getPath_to_file());
-                getActivity().startService(serviceIntent);
                 serviceInfo.setPlayList(list);
                 serviceInfo.setPosition(position);
 
+//                Intent pauseIntent = new Intent(getActivity(), MyService.class);
+//                pauseIntent.putExtra("command", "pause");
+//                pauseIntent.putExtra("dataBase", serviceInfo);
+//                getActivity().startService(pauseIntent);
+
+//                Intent serviceIntent = new Intent(getActivity(), MyService.class);
+//                serviceIntent.putExtra("command", info.getPath_to_file());
+//                serviceIntent.putExtra("dataBase", serviceInfo);
+//                getActivity().startService(serviceIntent);
+
+
                 Intent intent = new Intent(getActivity(), MyService.class);
-                intent.putExtra("command", list.get(position));
+                intent.putExtra("command", list.get(position).getPath_to_file());
                 intent.putExtra("dataBase", serviceInfo);
                 getActivity().startService(intent);
                 Log.i("dataBase", serviceInfo.getPlayList().toString());

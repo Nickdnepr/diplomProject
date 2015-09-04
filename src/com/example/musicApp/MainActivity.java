@@ -91,6 +91,7 @@ public class MainActivity extends FragmentActivity {
 //                player.start();
                 Intent serviceIntent = new Intent(MainActivity.this, MyService.class);
                 serviceIntent.putExtra("command", "start");
+                serviceIntent.putExtra("dataBase", serviceInfo);
                 startService(serviceIntent);
 
             }
@@ -102,6 +103,7 @@ public class MainActivity extends FragmentActivity {
 //                player.start();
                 Intent serviceIntent = new Intent(MainActivity.this, MyService.class);
                 serviceIntent.putExtra("command", "pause");
+                serviceIntent.putExtra("dataBase", serviceInfo);
                 startService(serviceIntent);
 
             }

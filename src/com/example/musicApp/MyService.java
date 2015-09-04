@@ -24,7 +24,7 @@ public class MyService extends Service implements MediaPlayer.OnPreparedListener
     private SettingsAndPlaylist serviceInfo;
     private List playList;
     private int position;
-    private static final long serialVersionUID = 20100515;
+
 
 
     @Override
@@ -116,7 +116,7 @@ public class MyService extends Service implements MediaPlayer.OnPreparedListener
                         } else {
                             try {
 
-
+                                player.stop();
                                 player = new MediaPlayer();
                                 player.setAudioStreamType(manager.STREAM_MUSIC);
                                 player.pause();
@@ -155,7 +155,12 @@ public class MyService extends Service implements MediaPlayer.OnPreparedListener
                         command = tmp.getPath_to_file();
                     }
                     try {
-                        mp.setDataSource(command);
+                        player.stop();
+                        player = new MediaPlayer();
+                        player.setAudioStreamType(manager.STREAM_MUSIC);
+                        player.pause();
+                        player.setDataSource(command);
+                        player.start();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
