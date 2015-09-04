@@ -24,7 +24,7 @@ public class MyService extends Service implements MediaPlayer.OnPreparedListener
     private SettingsAndPlaylist serviceInfo;
     private List playList;
     private int position;
-
+    private boolean pause = true;
 
 
     @Override
@@ -43,20 +43,26 @@ public class MyService extends Service implements MediaPlayer.OnPreparedListener
             return super.onStartCommand(intent, flags, startId);
         }
 
-            serviceInfo = (SettingsAndPlaylist) intent.getSerializableExtra("dataBase");
-            position = serviceInfo.getPosition();
-            repeatController = serviceInfo.isRepeat();
-            playList = serviceInfo.getPlayList();
+        serviceInfo = (SettingsAndPlaylist) intent.getSerializableExtra("dataBase");
+        position = serviceInfo.getPosition();
+        repeatController = serviceInfo.isRepeat();
+        playList = serviceInfo.getPlayList();
+
+        Log.i("playlist", playList.toString());
 
 
 //        String url = intent.getStringExtra("url");
         if (command.equals("pause")) {
+            pause = true;
             player.pause();
+            Log.i("pause ", pause+"");
         } else {
             if (command.equals("start")) {
+                pause = false;
                 player.start();
             } else {
                 if (command.equals("setProgress")) {
+                    pause=true;
                     player.seekTo(intent.getIntExtra("progress", -1));
                     if (intent.getIntExtra("progress", -1) == -1) {
                         try {
@@ -67,7 +73,8 @@ public class MyService extends Service implements MediaPlayer.OnPreparedListener
                         }
                     }
 
-
+                    pause=false;
+                    Log.i("pause ", pause+"");
                 } else {
 
 
@@ -85,10 +92,15 @@ public class MyService extends Service implements MediaPlayer.OnPreparedListener
                             cmd = tmp.getPath_to_file();
                         }
                         try {
+                            player.pause();
+                            player.reset();
+                            player=new MediaPlayer();
                             player.setDataSource(cmd);
+                            player.start();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        serviceInfo.setPosition(position);
 
 
                     } else {
@@ -108,15 +120,21 @@ public class MyService extends Service implements MediaPlayer.OnPreparedListener
                                 cmd = tmp.getPath_to_file();
                             }
                             try {
+                                player.pause();
+                                player.reset();
+                                player=new MediaPlayer();
                                 player.setDataSource(cmd);
+                                player.start();
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
+                            serviceInfo.setPosition(position);
 
                         } else {
                             try {
-
-                                player.stop();
+                                pause=true;
+                                Log.i("pause ", pause+"");
+                                player.pause();
                                 player = new MediaPlayer();
                                 player.setAudioStreamType(manager.STREAM_MUSIC);
                                 player.pause();
@@ -126,7 +144,8 @@ public class MyService extends Service implements MediaPlayer.OnPreparedListener
                                 player.prepareAsync();
                                 ProgressTask task = new ProgressTask();
                                 task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
+                                pause=false;
+                                Log.i("pause ", pause+"");
                             } catch (Exception e) {
                                 Log.i("uuu", e.toString());
                             }
@@ -140,29 +159,33 @@ public class MyService extends Service implements MediaPlayer.OnPreparedListener
         player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                if (repeatController) {
-                    mp.seekTo(0);
-                    mp.start();
-                } else {
-                    position = position + 1;
-                    if (position >= playList.size()) {
-                        position = position - 1;
-                    }
-                    serviceInfo.setPosition(position);
-                    Info tmp = (Info) playList.get(position);
-                    String command = tmp.getStream_url() + "?client_id=b45b1aa10f1ac2941910a7f0d10f8e28";
-                    if (tmp.getPath_to_file() != null) {
-                        command = tmp.getPath_to_file();
-                    }
-                    try {
-                        player.stop();
-                        player = new MediaPlayer();
-                        player.setAudioStreamType(manager.STREAM_MUSIC);
-                        player.pause();
-                        player.setDataSource(command);
-                        player.start();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                Log.i("player", "called onComplete");
+                if (player.isPlaying() == false && pause == false&& player.getDuration()-player.getCurrentPosition()<=750) {
+                    Log.i("pause", "called onComplete");
+                    if (repeatController) {
+                        mp.seekTo(0);
+                        mp.start();
+                    } else {
+                        position = position + 1;
+                        if (position >= playList.size()) {
+                            position = position - 1;
+                        }
+                        serviceInfo.setPosition(position);
+                        Info tmp = (Info) playList.get(position);
+                        String command = tmp.getStream_url() + "?client_id=b45b1aa10f1ac2941910a7f0d10f8e28";
+                        if (tmp.getPath_to_file() != null) {
+                            command = tmp.getPath_to_file();
+                        }
+                        try {
+                            player.pause();
+                            player = new MediaPlayer();
+                            player.setAudioStreamType(manager.STREAM_MUSIC);
+//                            player.pause();
+                            player.setDataSource(command);
+                            player.start();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }

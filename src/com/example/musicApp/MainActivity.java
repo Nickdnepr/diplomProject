@@ -49,24 +49,24 @@ public class MainActivity extends FragmentActivity {
         fragmentTabHost.addTab(fragmentTabHost.newTabSpec("search").setIndicator("search"), SearchFragment.class, null);
         fragmentTabHost.addTab(fragmentTabHost.newTabSpec("download").setIndicator("download"), FragmentTab.class, null);
 
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("broadcast_for_player");
-        receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                currentPosition = intent.getIntExtra("currentPosition", 0);
-                finalPosition = intent.getIntExtra("finalPosition", 0);
-                playing = intent.getBooleanExtra("playingStatus", false);
-//                try {
-//                    checkPlayer();
-//                } catch (Exception e) {
-//                    Log.i("error", e.toString());
-//                }
-//                checkPlayer();
-
-            }
-        };
-        registerReceiver(receiver, filter);
+//        IntentFilter filter = new IntentFilter();
+//        filter.addAction("broadcast_for_player");
+//        receiver = new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//                currentPosition = intent.getIntExtra("currentPosition", 0);
+//                finalPosition = intent.getIntExtra("finalPosition", 0);
+//                playing = intent.getBooleanExtra("playingStatus", false);
+////                try {
+////                    checkPlayer();
+////                } catch (Exception e) {
+////                    Log.i("error", e.toString());
+////                }
+////                checkPlayer();
+//
+//            }
+//        };
+//        registerReceiver(receiver, filter);
 
 
         fragmentTabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
@@ -191,6 +191,6 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(receiver);
+//        unregisterReceiver(receiver);
     }
 }

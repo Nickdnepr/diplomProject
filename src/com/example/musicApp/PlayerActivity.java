@@ -120,11 +120,13 @@ public class PlayerActivity extends Activity {
                 if (playing) {
                     playButton.setImageResource(R.drawable.ic_play_circle_outline_white_48dp);
                     serviceIntent.putExtra("command", "pause");
+                    serviceIntent.putExtra("dataBase", serviceInfo);
                     startService(serviceIntent);
                     playing = false;
                 } else {
                     playButton.setImageResource(R.drawable.ic_pause_circle_outline_white_48dp);
                     serviceIntent.putExtra("command", "start");
+                    serviceIntent.putExtra("dataBase", serviceInfo);
                     startService(serviceIntent);
                     playing = true;
                 }
@@ -139,10 +141,11 @@ public class PlayerActivity extends Activity {
                     Intent serviceIntent = new Intent(PlayerActivity.this, MyService.class);
                     serviceIntent.putExtra("command", "setProgress");
                     serviceIntent.putExtra("progress", progress * finalPosition / 100);
+                    serviceIntent.putExtra("dataBase", serviceInfo);
                     startService(serviceIntent);
-                    serviceIntent = new Intent(PlayerActivity.this, MyService.class);
-                    serviceIntent.putExtra("command", "start");
-                    startService(serviceIntent);
+//                    serviceIntent = new Intent(PlayerActivity.this, MyService.class);
+//                    serviceIntent.putExtra("command", "start");
+//                    startService(serviceIntent);
                 }
             }
 
@@ -216,6 +219,7 @@ public class PlayerActivity extends Activity {
 //                position = serviceInfo.getPosition();
                 Intent serviceIntent = new Intent(PlayerActivity.this, MyService.class);
                 serviceIntent.putExtra("command", "forward");
+                serviceIntent.putExtra("dataBase", serviceInfo);
                 startService(serviceIntent);
 //                serviceIntent = new Intent(PlayerActivity.this, MyService.class);
 //
@@ -242,6 +246,7 @@ public class PlayerActivity extends Activity {
 //                position = serviceInfo.getPosition();
                 Intent serviceIntent = new Intent(PlayerActivity.this, MyService.class);
                 serviceIntent.putExtra("command", "back");
+                serviceIntent.putExtra("dataBase", serviceInfo);
                 startService(serviceIntent);
 //                serviceIntent = new Intent(PlayerActivity.this, MyService.class);
 //                position = position - 1;
