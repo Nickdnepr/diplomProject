@@ -8,11 +8,17 @@ import java.util.List;
 /**
  * Created by ADMIN on 27.08.2015.
  */
+
+
+
 public class SettingsAndPlaylist implements Serializable {
-    private static List playList;
-    private static int position;
-    private static boolean repeat;
-    private static boolean random;
+    private static final long serialVersionUID = 42L;
+    private  List playList;
+    private  int position;
+    private  boolean repeat;
+    private  boolean random;
+
+
 
     public SettingsAndPlaylist() {
         Log.i("settings", "testtest");
@@ -35,20 +41,20 @@ public class SettingsAndPlaylist implements Serializable {
         this.playList = playList;
     }
 
-    public static boolean isRepeat() {
+    public  boolean isRepeat() {
         return repeat;
     }
 
-    public static void setRepeat(boolean repeat) {
-        SettingsAndPlaylist.repeat = repeat;
+    public  void setRepeat(boolean repeat) {
+        this.repeat = repeat;
     }
 
-    public static boolean isRandom() {
+    public  boolean isRandom() {
         return random;
     }
 
-    public static void setRandom(boolean random) {
-        SettingsAndPlaylist.random = random;
+    public  void setRandom(boolean random) {
+        this.random = random;
     }
 
 

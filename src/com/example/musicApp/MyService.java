@@ -24,6 +24,7 @@ public class MyService extends Service implements MediaPlayer.OnPreparedListener
     private SettingsAndPlaylist serviceInfo;
     private List playList;
     private int position;
+    private static final long serialVersionUID = 20100515;
 
 
     @Override
