@@ -9,8 +9,8 @@ import java.util.List;
  * Created by ADMIN on 27.08.2015.
  */
 public class SettingsAndPlaylist implements Serializable {
-    private List playList;
-    private int position;
+    private static List playList;
+    private static int position;
     private static boolean repeat;
     private static boolean random;
 

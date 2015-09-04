@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,7 +85,7 @@ public class FragmentTab extends Fragment {
                 intent.putExtra("command", list.get(position));
                 intent.putExtra("dataBase", serviceInfo);
                 getActivity().startService(intent);
-
+                Log.i("dataBase", serviceInfo.getPlayList().toString());
 
                 ListTask task = new ListTask();
                 FragmentTab.this.position=position;
