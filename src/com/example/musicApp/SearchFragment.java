@@ -96,21 +96,23 @@ public class SearchFragment extends Fragment implements MediaPlayer.OnPreparedLi
                 index = position;
                 Log.i("url", list.get(position).getStream_url());
 
-                Intent pauseIntent = new Intent(getActivity(), MyService.class);
-                pauseIntent.putExtra("command", "pause");
-                getActivity().startService(pauseIntent);
-
-                Intent serviceIntent = new Intent(getActivity(), MyService.class);
-                serviceIntent.putExtra("command", streamUrl);
-                getActivity().startService(serviceIntent);
+//                Intent pauseIntent = new Intent(getActivity(), MyService.class);
+//                pauseIntent.putExtra("command", "pause");
+//                getActivity().startService(pauseIntent);
+//
+//                Intent serviceIntent = new Intent(getActivity(), MyService.class);
+//                serviceIntent.putExtra("command", streamUrl);
+//                getActivity().startService(serviceIntent);
 
                 serviceInfo.setPlayList(list);
                 serviceInfo.setPosition(position);
 
                 Intent intent = new Intent(getActivity(), MyService.class);
-                intent.putExtra("command", list.get(position));
+                intent.putExtra("command", list.get(position).getStream_url()+"?client_id=b45b1aa10f1ac2941910a7f0d10f8e28");
                 intent.putExtra("dataBase", serviceInfo);
                 activity.startService(intent);
+                Log.i("tag", list.get(position).getStream_url());
+                Log.i("tag", list.toString());
 
 //                DataBaseTask task = new DataBaseTask();
 //                dataBase.addInfo(list.get(index));

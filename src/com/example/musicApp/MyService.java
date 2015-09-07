@@ -20,10 +20,10 @@ public class MyService extends Service implements MediaPlayer.OnPreparedListener
     private MediaPlayer player;
     private AudioManager manager;
     private boolean taskController;
-    private boolean repeatController;
+    private boolean repeatController = false;
     private SettingsAndPlaylist serviceInfo;
     private List playList;
-    private int position;
+    private int position = 0;
     private boolean pause = true;
 
 
@@ -38,129 +38,117 @@ public class MyService extends Service implements MediaPlayer.OnPreparedListener
             return super.onStartCommand(intent, flags, startId);
         }
 
-        String command = intent.getStringExtra("command");
-        if (command == null) {
-            return super.onStartCommand(intent, flags, startId);
+
+        if (intent.getSerializableExtra("dataBase") != null) {
+            serviceInfo = (SettingsAndPlaylist) intent.getSerializableExtra("dataBase");
+            position = serviceInfo.getPosition();
+            try {
+                playList = serviceInfo.getPlayList();
+                Log.i("playlist", playList.toString());
+            } catch (Exception e) {
+                Log.i("error", e.toString());
+            }
         }
 
-        serviceInfo = (SettingsAndPlaylist) intent.getSerializableExtra("dataBase");
-        position = serviceInfo.getPosition();
-        repeatController = serviceInfo.isRepeat();
-        playList = serviceInfo.getPlayList();
 
-        Log.i("playlist", playList.toString());
-
-
-//        String url = intent.getStringExtra("url");
-        if (command.equals("pause")) {
-            pause = true;
-            player.pause();
-            Log.i("pause ", pause+"");
-        } else {
-            if (command.equals("start")) {
-                pause = false;
-                player.start();
+        if (intent.getStringExtra("command") != null) {
+            String command = intent.getStringExtra("command");
+            if (command.equals("pause")) {
+                pause = true;
+                player.pause();
+                Log.i("pause ", pause + "");
             } else {
-                if (command.equals("setProgress")) {
-                    pause=true;
-                    player.seekTo(intent.getIntExtra("progress", -1));
-                    if (intent.getIntExtra("progress", -1) == -1) {
-                        try {
-                            throw new NullPointerException("progress statement is null");
-                        } catch (Exception e) {
-                            return super.onStartCommand(intent, flags, startId);
-
-                        }
-                    }
-
-                    pause=false;
-                    Log.i("pause ", pause+"");
+                if (command.equals("start")) {
+                    pause = false;
+                    player.start();
                 } else {
+                    if (command.equals("setProgress")) {
+                        pause = true;
+                        player.seekTo(intent.getIntExtra("progress", -1));
+                        if (intent.getIntExtra("progress", -1) == -1) {
+                            try {
+                                throw new NullPointerException("progress statement is null");
+                            } catch (Exception e) {
+                                return super.onStartCommand(intent, flags, startId);
 
-
-                    if (command.equals("forward")) {
-
-//                        if(repeatController)
-                        position = position + 1;
-                        if (position >= playList.size()) {
-                            position = position - 1;
+                            }
                         }
-                        serviceInfo.setPosition(position);
-                        Info tmp = (Info) playList.get(position);
-                        String cmd = tmp.getStream_url() + "?client_id=b45b1aa10f1ac2941910a7f0d10f8e28";
-                        if (tmp.getPath_to_file() != null) {
-                            cmd = tmp.getPath_to_file();
-                        }
-                        try {
-                            player.pause();
-                            player.reset();
-                            player=new MediaPlayer();
-                            player.setDataSource(cmd);
-                            player.start();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        serviceInfo.setPosition(position);
 
-
+                        pause = false;
+                        Log.i("pause ", pause + "");
                     } else {
 
-                        if (command.equals("back")) {
-                            position = position - 1;
-                            serviceInfo.setPosition(position);
-                            if (position < 0) {
-                                position = position + 1;
+
+                        if (command.equals("forward")) {
+
+//                        if(repeatController)
+                            position = position + 1;
+                            if (position >= playList.size()) {
+                                position = position - 1;
                             }
-
+                            serviceInfo.setPosition(position);
                             Info tmp = (Info) playList.get(position);
-
-                            Log.i("music", "clicked back");
                             String cmd = tmp.getStream_url() + "?client_id=b45b1aa10f1ac2941910a7f0d10f8e28";
                             if (tmp.getPath_to_file() != null) {
                                 cmd = tmp.getPath_to_file();
                             }
                             try {
-                                player.pause();
-                                player.reset();
-                                player=new MediaPlayer();
-                                player.setDataSource(cmd);
-                                player.start();
-                            } catch (IOException e) {
+                                startOnCommand(cmd);
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                             serviceInfo.setPosition(position);
 
+
                         } else {
-                            try {
-                                pause=true;
-                                Log.i("pause ", pause+"");
-                                player.pause();
-                                player = new MediaPlayer();
-                                player.setAudioStreamType(manager.STREAM_MUSIC);
-                                player.pause();
-                                player.setDataSource(command);
-//                    player.start();
-                                player.setOnPreparedListener(this);
-                                player.prepareAsync();
-                                ProgressTask task = new ProgressTask();
-                                task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                                pause=false;
-                                Log.i("pause ", pause+"");
-                            } catch (Exception e) {
-                                Log.i("uuu", e.toString());
+
+                            if (command.equals("back")) {
+                                position = position - 1;
+
+                                if (position < 0) {
+                                    position = position + 1;
+                                }
+                                serviceInfo.setPosition(position);
+                                Info tmp = (Info) playList.get(position);
+                                String cmd = tmp.getStream_url() + "?client_id=b45b1aa10f1ac2941910a7f0d10f8e28";
+                                if (tmp.getPath_to_file() != null) {
+                                    cmd = tmp.getPath_to_file();
+                                }
+                                try {
+                                    startOnCommand(cmd);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                serviceInfo.setPosition(position);
+
+                            } else {
+                                if (command.equals("changeRepeatController")) {
+                                    if (repeatController) {
+                                        repeatController = false;
+                                    } else {
+                                        repeatController = true;
+                                    }
+                                } else {
+                                    startOnCommand(command);
+                                }
                             }
                         }
                     }
-                }
 
+                }
             }
         }
+
+
+//        String url = intent.getStringExtra("url");
+
 
         player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 Log.i("player", "called onComplete");
-                if (player.isPlaying() == false && pause == false&& player.getDuration()-player.getCurrentPosition()<=750) {
+//                player.isPlaying() == false && pause == false &&
+                if ((player.getDuration() - player.getCurrentPosition() <= 750 || player.getCurrentPosition() >= player.getDuration())) {
                     Log.i("pause", "called onComplete");
                     if (repeatController) {
                         mp.seekTo(0);
@@ -172,20 +160,16 @@ public class MyService extends Service implements MediaPlayer.OnPreparedListener
                         }
                         serviceInfo.setPosition(position);
                         Info tmp = (Info) playList.get(position);
-                        String command = tmp.getStream_url() + "?client_id=b45b1aa10f1ac2941910a7f0d10f8e28";
+                        String cmd = tmp.getStream_url() + "?client_id=b45b1aa10f1ac2941910a7f0d10f8e28";
                         if (tmp.getPath_to_file() != null) {
-                            command = tmp.getPath_to_file();
+                            cmd = tmp.getPath_to_file();
                         }
                         try {
-                            player.pause();
-                            player = new MediaPlayer();
-                            player.setAudioStreamType(manager.STREAM_MUSIC);
-//                            player.pause();
-                            player.setDataSource(command);
-                            player.start();
-                        } catch (IOException e) {
+                            startOnCommand(cmd);
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
+                        serviceInfo.setPosition(position);
                     }
                 }
             }
@@ -194,6 +178,28 @@ public class MyService extends Service implements MediaPlayer.OnPreparedListener
 
         return super.onStartCommand(intent, flags, startId);
 
+    }
+
+    private void startOnCommand(String command) {
+        try {
+            pause = true;
+            Log.i("pause ", pause + "");
+            player.pause();
+            player = new MediaPlayer();
+            player.setAudioStreamType(manager.STREAM_MUSIC);
+            player.pause();
+            player.setDataSource(command);
+//                    player.start();
+            player.setOnPreparedListener(this);
+            player.prepare();
+            player.start();
+            ProgressTask task = new ProgressTask();
+            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            pause = false;
+            Log.i("pause ", pause + "");
+        } catch (Exception e) {
+            Log.i("uuu", e.toString());
+        }
     }
 
     @Override

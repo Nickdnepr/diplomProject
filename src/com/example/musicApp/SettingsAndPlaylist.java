@@ -38,6 +38,10 @@ public class SettingsAndPlaylist implements Serializable {
     }
 
     public static void setPlayList(List playList) {
+        if(playList==null){
+            return;
+        }
+        Log.i("tag", playList.toString());
         SettingsAndPlaylist.playList = playList;
     }
 

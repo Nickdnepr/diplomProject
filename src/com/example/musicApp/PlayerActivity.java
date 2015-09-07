@@ -46,16 +46,13 @@ public class PlayerActivity extends Activity {
         try {
             serviceInfo = (SettingsAndPlaylist) getIntent().getSerializableExtra("dataBase");
             position = serviceInfo.getPosition();
+            playList = serviceInfo.getPlayList();
+            Log.i("playlist", playList.toString());
         } catch (Exception e) {
             Log.i("error", e.toString());
         }
 
-        try {
-            playList = serviceInfo.getPlayList();
-        } catch (Exception e) {
 
-//            Toast.makeText(getApplicationContext(), "nothing to play");
-        }
 
 
         final ImageView playButton = (ImageView) findViewById(R.id.play_button);
@@ -96,9 +93,9 @@ public class PlayerActivity extends Activity {
                     String second = finalPosition / 1000 / 60 + ":" + finalPosition / 1000 % 60;
 
 
-                    if (finalPosition - currentPosition <= 750 && playing == false) {
-                        restartSong();
-                    }
+//                    if (finalPosition - currentPosition <= 750 && playing == false) {
+//                        restartSong();
+//                    }
                     currentTime.setText(first);
                     fullTime.setText(second);
 
@@ -120,13 +117,13 @@ public class PlayerActivity extends Activity {
                 if (playing) {
                     playButton.setImageResource(R.drawable.ic_play_circle_outline_white_48dp);
                     serviceIntent.putExtra("command", "pause");
-                    serviceIntent.putExtra("dataBase", serviceInfo);
+//                    serviceIntent.putExtra("dataBase", serviceInfo);
                     startService(serviceIntent);
                     playing = false;
                 } else {
                     playButton.setImageResource(R.drawable.ic_pause_circle_outline_white_48dp);
                     serviceIntent.putExtra("command", "start");
-                    serviceIntent.putExtra("dataBase", serviceInfo);
+//                    serviceIntent.putExtra("dataBase", serviceInfo);
                     startService(serviceIntent);
                     playing = true;
                 }
@@ -141,7 +138,7 @@ public class PlayerActivity extends Activity {
                     Intent serviceIntent = new Intent(PlayerActivity.this, MyService.class);
                     serviceIntent.putExtra("command", "setProgress");
                     serviceIntent.putExtra("progress", progress * finalPosition / 100);
-                    serviceIntent.putExtra("dataBase", serviceInfo);
+//                    serviceIntent.putExtra("dataBase", serviceInfo);
                     startService(serviceIntent);
 //                    serviceIntent = new Intent(PlayerActivity.this, MyService.class);
 //                    serviceIntent.putExtra("command", "start");
@@ -173,10 +170,13 @@ public class PlayerActivity extends Activity {
 //                    serviceInfo.setPosition(position);
 //                    serviceInfo.setPlayList(playList);
                     serviceInfo.setRepeat(repeat);
-                    Intent intent = new Intent(PlayerActivity.this, MyService.class);
-                    intent.putExtra("dataBase", serviceInfo);
-                    intent.putExtra("command", "start");
+                    serviceInfo.setPlayList(playList);
+
                 }
+                Intent intent = new Intent(PlayerActivity.this, MyService.class);
+//                    intent.putExtra("dataBase", serviceInfo);
+                intent.putExtra("command", "changeRepeatController");
+                startService(intent);
             }
         });
 
@@ -207,8 +207,10 @@ public class PlayerActivity extends Activity {
                     randomButton.setImageResource(R.drawable.ic_shuffle_white_48dp);
                     playList = orderedList;
                     Intent intent = new Intent(PlayerActivity.this, MyService.class);
+                    serviceInfo.setPlayList(playList);
                     intent.putExtra("dataBase", serviceInfo);
                     intent.putExtra("command", "start");
+                    startService(intent);
                 }
             }
         });
@@ -219,7 +221,7 @@ public class PlayerActivity extends Activity {
 //                position = serviceInfo.getPosition();
                 Intent serviceIntent = new Intent(PlayerActivity.this, MyService.class);
                 serviceIntent.putExtra("command", "forward");
-                serviceIntent.putExtra("dataBase", serviceInfo);
+//                serviceIntent.putExtra("dataBase", serviceInfo);
                 startService(serviceIntent);
 //                serviceIntent = new Intent(PlayerActivity.this, MyService.class);
 //
@@ -246,7 +248,7 @@ public class PlayerActivity extends Activity {
 //                position = serviceInfo.getPosition();
                 Intent serviceIntent = new Intent(PlayerActivity.this, MyService.class);
                 serviceIntent.putExtra("command", "back");
-                serviceIntent.putExtra("dataBase", serviceInfo);
+//                serviceIntent.putExtra("dataBase", serviceInfo);
                 startService(serviceIntent);
 //                serviceIntent = new Intent(PlayerActivity.this, MyService.class);
 //                position = position - 1;
@@ -361,21 +363,21 @@ public class PlayerActivity extends Activity {
     }
 
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        serviceInfo.setPosition(position);
-        serviceInfo.setPlayList(playList);
-        serviceInfo.setRepeat(repeat);
-        active = false;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        repeat = serviceInfo.isRepeat();
-        active = true;
-    }
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        serviceInfo.setPosition(position);
+//        serviceInfo.setPlayList(playList);
+//        serviceInfo.setRepeat(repeat);
+//        active = false;
+//    }
+//
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        repeat = serviceInfo.isRepeat();
+//        active = true;
+//    }
 
     @Override
     protected void onDestroy() {

@@ -5,14 +5,16 @@
               android:layout_height="wrap_content">
     <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="80dp"
+            android:layout_height="match_parent"
             android:id="@+id/image"
-            android:src="@drawable/ic_launcher"
+            android:src="@drawable/ic_album_white_48dp"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
+            android:layout_weight="1"
             android:layout_margin="10dp"/>
     <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="8"
             android:layout_height="match_parent"
             android:orientation="vertical">
         <TextView
@@ -21,8 +23,9 @@
                 android:maxLines="1"
                 android:ellipsize="end"
                 android:text="test"
-                android:textSize="24dp"
+                android:textSize="32sp"
                 android:id="@+id/title"
+                android:singleLine="true"
                 android:gravity="center"/>
         <LinearLayout
                 android:layout_width="match_parent"
@@ -37,7 +40,9 @@
                     android:layout_weight="1"
                     android:layout_height="match_parent"
                     android:id="@+id/likes_string"
-                    android:textSize="20sp"/>
+                    android:textSize="20sp"
+                    android:text="234"
+                    android:gravity="center"/>
             <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -47,6 +52,9 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="match_parent"
+                    android:textSize="20sp"
+                    android:gravity="center"
+                    android:text="123"
                     android:id="@+id/time_string"/>
             <ImageView
                     android:layout_width="wrap_content"
@@ -59,7 +67,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:text="test"
+                android:text="test123124151352235246346346"
+                android:singleLine="true"
                 android:textSize="32sp"
                 android:gravity="center"
                 android:id="@+id/avtor"/>
