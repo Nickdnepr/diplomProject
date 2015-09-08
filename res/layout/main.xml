@@ -45,7 +45,7 @@
                                         android:adjustViewBounds="true"
                                         android:scaleType="fitCenter"
                                         android:src="@drawable/ic_list_white_48dp"
-                                        android:id="@+id/icon"/>
+                                        android:id="@+id/settings_button_main_layout"/>
 
                         </LinearLayout>
 

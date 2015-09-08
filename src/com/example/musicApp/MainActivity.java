@@ -83,6 +83,7 @@ public class MainActivity extends FragmentActivity {
         Button start = (Button) findViewById(R.id.startButton);
         Button pause = (Button) findViewById(R.id.pauseButton);
         ImageView sharedPlayerButton = (ImageView) findViewById(R.id.shared_player_button);
+        ImageView settingsButton = (ImageView)findViewById(R.id.settings_button_main_layout);
 
 
         start.setOnClickListener(new View.OnClickListener() {
@@ -118,6 +119,14 @@ public class MainActivity extends FragmentActivity {
                 startActivity(playerIntent);
 
 
+            }
+        });
+
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(intent);
             }
         });
 

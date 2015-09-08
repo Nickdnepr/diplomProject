@@ -18,8 +18,8 @@
             <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_label_white_48dp"
-
+                    android:src="@drawable/ic_home_white_48dp"
+                    android:id="@+id/main_button_player_layout"
                     android:layout_marginLeft="10dp"/>
         </LinearLayout>
 
@@ -36,7 +36,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/ic_list_white_48dp"
-                    android:id="@+id/settings_button"
+                    android:id="@+id/settings_button_player_layout"
                     />
         </LinearLayout>
     </LinearLayout>

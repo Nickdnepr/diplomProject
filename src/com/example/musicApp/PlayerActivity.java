@@ -63,6 +63,8 @@ public class PlayerActivity extends Activity {
         final ImageView forwardButton = (ImageView) findViewById(R.id.next_audio_button);
         final ImageView backButton = (ImageView) findViewById(R.id.previous_audio_button);
         final ImageView randomButton = (ImageView) findViewById(R.id.random_list);
+        final ImageView settingsButton = (ImageView)findViewById(R.id.settings_button_player_layout);
+        final ImageView mainButton = (ImageView)findViewById(R.id.main_button_player_layout);
 
 
         IntentFilter filter = new IntentFilter();
@@ -130,6 +132,14 @@ public class PlayerActivity extends Activity {
             }
         });
 
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PlayerActivity.this, SettingsActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         prograssBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -154,6 +164,14 @@ public class PlayerActivity extends Activity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 
+            }
+        });
+
+        mainButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PlayerActivity.this, MainActivity.class);
+                startActivity(intent);
             }
         });
 

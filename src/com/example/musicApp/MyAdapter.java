@@ -42,7 +42,7 @@ public class MyAdapter extends ArrayAdapter<Info> {
 
 
         if(listBoolean){
-            downloadButton.setImageResource(R.drawable.ic_highlight_off_white_48dp);
+            downloadButton.setImageResource(R.drawable.ic_delete_white_48dp);
         }
 //        Log.i("adapterInfo", item.getTitle());
 //        Log.i("adapterInfo", item.getLikes_count()+"");
