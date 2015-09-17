@@ -38,7 +38,7 @@ import java.util.List;
 public class SearchFragment extends Fragment implements MediaPlayer.OnPreparedListener {
     private String requestString;
     private String parsedJson;
-    private ArrayList<Info> list = new ArrayList<>();
+    private List<Info> list = new ArrayList<>();
     private Gson gson = new GsonBuilder().create();
     private MyAdapter adapter;
     private String streamUrl;
@@ -78,7 +78,7 @@ public class SearchFragment extends Fragment implements MediaPlayer.OnPreparedLi
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                ImageView downloadButton = (ImageView)view.findViewById(R.id.downloadButton);
+                final ImageView downloadButton = (ImageView)view.findViewById(R.id.downloadButton);
 
                 downloadButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -87,6 +87,7 @@ public class SearchFragment extends Fragment implements MediaPlayer.OnPreparedLi
 //                dataBase.addInfo(list.get(index));
                         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 //                        dataBase.addInfo(list.get(index));
+                        downloadButton.setImageResource(R.drawable.ic_get_app_black_48dp);
                         Log.i("download", "started downloading");
                     }
                 });
@@ -166,8 +167,9 @@ public class SearchFragment extends Fragment implements MediaPlayer.OnPreparedLi
                 list.addAll(infoList);
 
                 Log.i("112", list.toString());
-
+                serviceInfo.setPlayList(list);
                 adapter.notifyDataSetChanged();
+
             }
 
             public void onError(Exception e) {
@@ -205,6 +207,18 @@ public class SearchFragment extends Fragment implements MediaPlayer.OnPreparedLi
             super.onPreExecute();
             Log.i("info", "starting async");
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i("searchFragment", "called onResume");
+
+        if (serviceInfo.getPlayList()!=null){
+            list=serviceInfo.getPlayList();
+            Log.i("searchFragment", "called onResume, called listSetter");
+        }
+        adapter.notifyDataSetChanged();
     }
 
     public List<Info> getList(){

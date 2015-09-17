@@ -32,6 +32,11 @@ public class MyService extends Service implements MediaPlayer.OnPreparedListener
         return null;
     }
 
+    public MyService() {
+        player = new MediaPlayer();
+        player.setAudioStreamType(manager.STREAM_MUSIC);
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent == null) {

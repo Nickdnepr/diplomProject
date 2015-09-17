@@ -189,6 +189,29 @@ public class MusicDataBase extends SQLiteOpenHelper{
         Log.i("delete",myFile.delete()+"");
     }
 
+    public boolean checkForExist(Info info){
+        boolean b = false;
+        cursor = musicBase.query("mytable", null, null, null, null, null, null);
+
+        initColumns();
+
+
+        if (cursor.moveToFirst()) {
+
+
+            do {
+                Info addedInfo = new Info(cursor.getString(nameCollumIndex), cursor.getInt(durationCollumIndex), new User(cursor.getString(authorCollumIndex)), cursor.getInt(likesCountCollumIndex), cursor.getString(streamUrlCollumIndex), cursor.getString(downloadUrlCollumIndex), cursor.getString(pathToFileCollumIndex));
+                if(addedInfo.getStream_url().equals(info.getStream_url())){
+                    b=true;
+                    break;
+                }
+
+            } while (cursor.moveToNext());
+
+        }
+        return b;
+    }
+
 
 }
 
