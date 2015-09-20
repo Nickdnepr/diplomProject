@@ -48,7 +48,7 @@ public class SearchFragment extends Fragment implements MediaPlayer.OnPreparedLi
     private FragmentTab downloadFragment;
     private MainActivity activity;
     SettingsAndPlaylist serviceInfo;
-
+    ListView listView;
     //    String url = ;
 
     @Override
@@ -67,7 +67,7 @@ public class SearchFragment extends Fragment implements MediaPlayer.OnPreparedLi
         dataBase = activity.getDataBase();
         serviceInfo=activity.serviceInfo;
         downloadFragment = (FragmentTab) getFragmentManager().findFragmentByTag("download");
-        ListView listView = (ListView) getView().findViewById(R.id.listView);
+        listView = (ListView) getView().findViewById(R.id.listView);
         adapter = new MyAdapter(getActivity(), list, false);
         listView.setAdapter(adapter);
 
@@ -78,7 +78,7 @@ public class SearchFragment extends Fragment implements MediaPlayer.OnPreparedLi
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                final ImageView downloadButton = (ImageView)view.findViewById(R.id.downloadButton);
+                final ImageView downloadButton = (ImageView) view.findViewById(R.id.downloadButton);
 
                 downloadButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -91,43 +91,37 @@ public class SearchFragment extends Fragment implements MediaPlayer.OnPreparedLi
                         Log.i("download", "started downloading");
                     }
                 });
-                streamUrl = list.get(position).getStream_url()+"?client_id=b45b1aa10f1ac2941910a7f0d10f8e28";
-                downloadUrl = list.get(position).getDownload_url();
+                streamUrl = list.get(position).getStream_url() + "?client_id=b45b1aa10f1ac2941910a7f0d10f8e28";
+//                downloadUrl = list.get(position).getDownload_url();
 
                 index = position;
                 Log.i("url", list.get(position).getStream_url());
 
-//                Intent pauseIntent = new Intent(getActivity(), MyService.class);
-//                pauseIntent.putExtra("command", "pause");
-//                getActivity().startService(pauseIntent);
-//
-//                Intent serviceIntent = new Intent(getActivity(), MyService.class);
-//                serviceIntent.putExtra("command", streamUrl);
-//                getActivity().startService(serviceIntent);
 
                 serviceInfo.setPlayList(list);
                 serviceInfo.setPosition(position);
 
                 Intent intent = new Intent(getActivity(), MyService.class);
-                intent.putExtra("command", list.get(position).getStream_url()+"?client_id=b45b1aa10f1ac2941910a7f0d10f8e28");
+                intent.putExtra("command", list.get(position).getStream_url() + "?client_id=b45b1aa10f1ac2941910a7f0d10f8e28");
                 intent.putExtra("dataBase", serviceInfo);
                 activity.startService(intent);
                 Log.i("tag", list.get(position).getStream_url());
                 Log.i("tag", list.toString());
 
-//                DataBaseTask task = new DataBaseTask();
-//                dataBase.addInfo(list.get(index));
-//                task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
                 activity.needToRefresh = true;
 
 
-//                Intent listIntent = new Intent("listSender");
-//                listIntent.putExtra("list", list);
-//                listIntent.putExtra("position", position);
-//                getActivity().sendBroadcast(listIntent);
             }
         });
+
+//        if (serviceInfo.getPlayList()!=null){
+//            list=serviceInfo.getPlayList();
+//            Log.i("searchFragment", "called onResume, called listSetter");
+//            Log.i("searchFragment", serviceInfo.getPlayList().toString());
+//            adapter.notifyDataSetChanged();
+//        }
+
 
 
         final EditText request = (EditText) getView().findViewById(R.id.request);
@@ -174,7 +168,7 @@ public class SearchFragment extends Fragment implements MediaPlayer.OnPreparedLi
 
             public void onError(Exception e) {
 
-                Log.i("111", "spasitipamagiti", e);
+                Log.i("111", "request error", e);
             }
         });
     }
@@ -216,9 +210,14 @@ public class SearchFragment extends Fragment implements MediaPlayer.OnPreparedLi
 
         if (serviceInfo.getPlayList()!=null){
             list=serviceInfo.getPlayList();
+            adapter=new MyAdapter(getActivity(), list, false);
+            listView.setAdapter(adapter);
             Log.i("searchFragment", "called onResume, called listSetter");
+            Log.i("searchFragment", serviceInfo.getPlayList().toString());
+
         }
         adapter.notifyDataSetChanged();
+        listView.refreshDrawableState();
     }
 
     public List<Info> getList(){

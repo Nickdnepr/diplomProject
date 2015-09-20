@@ -39,6 +39,7 @@ public class MyAdapter extends ArrayAdapter<Info> {
         TextView duration = (TextView)convertView.findViewById(R.id.time_string);
         TextView avtor = (TextView)convertView.findViewById(R.id.avtor);
         ImageView downloadButton = (ImageView)convertView.findViewById(R.id.downloadButton);
+        ImageView icon = (ImageView)convertView.findViewById(R.id.image);
 
 
         if(listBoolean){

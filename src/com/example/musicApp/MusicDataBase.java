@@ -27,10 +27,11 @@ public class MusicDataBase extends SQLiteOpenHelper{
     private int authorCollumIndex;
     private int nameCollumIndex;
     private int likesCountCollumIndex;
-    private int downloadUrlCollumIndex;
+    private int artworkUrlCollumIndex;
     private int streamUrlCollumIndex;
     private int durationCollumIndex;
     private int pathToFileCollumIndex;
+
     private Cursor cursor;
 
     public MusicDataBase(Context context) {
@@ -43,7 +44,7 @@ public class MusicDataBase extends SQLiteOpenHelper{
     }
 
     public void addInfo(Info addedInfo) {
-        Log.i("info", "called method addInfo");
+        Log.i("dataBase", "called method addInfo");
 
         initColumns();
 
@@ -51,7 +52,7 @@ public class MusicDataBase extends SQLiteOpenHelper{
         Log.i("id", authorCollumIndex+"");
         Log.i("id", nameCollumIndex+"");
         Log.i("id", likesCountCollumIndex+"");
-        Log.i("id", downloadUrlCollumIndex+"");
+        Log.i("id", artworkUrlCollumIndex+"");
         Log.i("id", streamUrlCollumIndex+"");
         Log.i("id", durationCollumIndex+"");
         Log.i("id", pathToFileCollumIndex+"");
@@ -59,17 +60,17 @@ public class MusicDataBase extends SQLiteOpenHelper{
 
 
         if (cursor.moveToFirst()) {
-            Log.i("info", "cursor moved to first");
+            Log.i("dataBase", "cursor moved to first");
 
             do {
-                Info tempInfo = new Info(cursor.getString(nameCollumIndex), cursor.getInt(durationCollumIndex), new User(cursor.getString(authorCollumIndex)), cursor.getInt(likesCountCollumIndex), cursor.getString(streamUrlCollumIndex), cursor.getString(downloadUrlCollumIndex), cursor.getString(pathToFileCollumIndex));
-                Log.i("info", "addedInfo________" + addedInfo.getStream_url());
-                Log.i("info", "tempInfo________" + tempInfo.getStream_url());
+                Info tempInfo = new Info(cursor.getString(nameCollumIndex), cursor.getInt(durationCollumIndex), new User(cursor.getString(authorCollumIndex)), cursor.getInt(likesCountCollumIndex), cursor.getString(streamUrlCollumIndex), cursor.getString(pathToFileCollumIndex), cursor.getString(artworkUrlCollumIndex));
+                Log.i("dataBase info", "addedInfo________" + addedInfo.getStream_url());
+                Log.i("dataBase info", "tempInfo________" + tempInfo.getStream_url());
 
-                Log.i("list", tempInfo.toString());
-                Log.i("list", addedInfo.toString());
+                Log.i("dataBase list", tempInfo.toString());
+                Log.i("dataBase list", addedInfo.toString());
                 if (addedInfo.getStream_url().equals(tempInfo.getStream_url())) {
-                    Log.i("info", "we have this music");
+                    Log.i("dataBase", "we have this music");
                     return;
                 }
 
@@ -79,7 +80,7 @@ public class MusicDataBase extends SQLiteOpenHelper{
 
         Calendar c = Calendar.getInstance();
         String seconds = c.get(Calendar.YEAR) + "" + c.get(Calendar.MONTH) + "" + c.get(Calendar.DAY_OF_MONTH) + "" + c.get(Calendar.HOUR_OF_DAY) + "" + c.get(Calendar.MINUTE) + "" + c.get(Calendar.SECOND);
-        Log.i("time", seconds);
+        Log.i("dataBase", seconds);
         String name = addedInfo.getTitle();
         File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
         File myFile = new File(dir, name + ".mp3");
@@ -87,27 +88,29 @@ public class MusicDataBase extends SQLiteOpenHelper{
 
         try {
             myFile.createNewFile();
-            Log.i("info", "file created");
+            Log.i("dataBase", "file created");
         } catch (IOException e) {
             e.printStackTrace();
-            Log.i("info", e.toString());
+            Log.i("dataBase", e.toString());
+            Log.i("dataBase", "file not created");
+            return;
         }
 
 
         if (myFile.exists()) {
 
-            Log.i("info", "started downloading");
+            Log.i("dataBase", "started downloading");
             DownloadService.downloadFile(addedInfo.getStream_url()+"?client_id=b45b1aa10f1ac2941910a7f0d10f8e28", myFile);
 
             addedInfo.setPath_to_file(myFile.getAbsolutePath());
-            Log.i("info", "file created");
+            Log.i("dataBase", "file created");
         } else {
-            Log.i("info", "file not found");
+            Log.i("dataBase", "file not found");
             return;
         }
 
 
-        Log.i("FileInfo", myFile.getAbsolutePath());
+        Log.i("dataBase FileInfo", myFile.getAbsolutePath());
 
 
         ContentValues values = new ContentValues();
@@ -115,20 +118,20 @@ public class MusicDataBase extends SQLiteOpenHelper{
         values.put("name", addedInfo.getTitle());
         values.put("likesCount", addedInfo.getLikes_count());
         values.put("duration", addedInfo.getDuration());
-        values.put("downloadUrl", addedInfo.getDownload_url());
+        values.put("artworkUrl", addedInfo.getPath_to_file());
         values.put("pathToFile", addedInfo.getPath_to_file());
         values.put("streamUrl", addedInfo.getStream_url());
 
         long insertResult = musicBase.insert("mytable", null, values);
-        Log.i("asdfasdf", "insertResult: " + insertResult);
+        Log.i("dataBase", "insertResult: " + insertResult);
 
-        Log.i("insert", addedInfo.getUser().getUsername());
-        Log.i("insert", addedInfo.getTitle());
-        Log.i("insert", addedInfo.getLikes_count()+"");
-        Log.i("insert", addedInfo.getDuration()+"");
+        Log.i("dataBase insert", addedInfo.getUser().getUsername());
+        Log.i("dataBase insert", addedInfo.getTitle());
+        Log.i("dataBase insert", addedInfo.getLikes_count()+"");
+        Log.i("dataBase insert", addedInfo.getDuration()+"");
 
 
-        Log.i("info", "info inserted");
+        Log.i("dataBase", "info inserted");
     }
 
     private void initColumns() {
@@ -136,7 +139,7 @@ public class MusicDataBase extends SQLiteOpenHelper{
         authorCollumIndex = cursor.getColumnIndex("author");
         nameCollumIndex = cursor.getColumnIndex("name");
         likesCountCollumIndex = cursor.getColumnIndex("likesCount");
-        downloadUrlCollumIndex = cursor.getColumnIndex("downloadUrl");
+        artworkUrlCollumIndex = cursor.getColumnIndex("artworkUrl");
         streamUrlCollumIndex = cursor.getColumnIndex("streamUrl");
         durationCollumIndex = cursor.getColumnIndex("duration");
         pathToFileCollumIndex = cursor.getColumnIndex("pathToFile");
@@ -152,7 +155,7 @@ public class MusicDataBase extends SQLiteOpenHelper{
 
 
             do {
-                Info addedInfo = new Info(cursor.getString(nameCollumIndex), cursor.getInt(durationCollumIndex), new User(cursor.getString(authorCollumIndex)), cursor.getInt(likesCountCollumIndex), cursor.getString(streamUrlCollumIndex), cursor.getString(downloadUrlCollumIndex), cursor.getString(pathToFileCollumIndex));
+                Info addedInfo = new Info(cursor.getString(nameCollumIndex), cursor.getInt(durationCollumIndex), new User(cursor.getString(authorCollumIndex)), cursor.getInt(likesCountCollumIndex), cursor.getString(streamUrlCollumIndex), cursor.getString(pathToFileCollumIndex), cursor.getString(artworkUrlCollumIndex));
                 list.add(addedInfo);
                 Log.i("list", addedInfo.toString());
                 Log.i("list", "----------------------------------------------");
@@ -171,7 +174,7 @@ public class MusicDataBase extends SQLiteOpenHelper{
                 + "name text,"
                 + "likesCount integer,"
                 + "duration integer,"
-                + "downloadUrl text,"
+                + "artworkUrl text,"
                 + "pathToFile text,"
                 + "streamUrl text " + ");");
     }
@@ -200,7 +203,7 @@ public class MusicDataBase extends SQLiteOpenHelper{
 
 
             do {
-                Info addedInfo = new Info(cursor.getString(nameCollumIndex), cursor.getInt(durationCollumIndex), new User(cursor.getString(authorCollumIndex)), cursor.getInt(likesCountCollumIndex), cursor.getString(streamUrlCollumIndex), cursor.getString(downloadUrlCollumIndex), cursor.getString(pathToFileCollumIndex));
+                Info addedInfo = new Info(cursor.getString(nameCollumIndex), cursor.getInt(durationCollumIndex), new User(cursor.getString(authorCollumIndex)), cursor.getInt(likesCountCollumIndex), cursor.getString(streamUrlCollumIndex), cursor.getString(pathToFileCollumIndex), cursor.getString(artworkUrlCollumIndex));
                 if(addedInfo.getStream_url().equals(info.getStream_url())){
                     b=true;
                     break;

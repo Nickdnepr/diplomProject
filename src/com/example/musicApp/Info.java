@@ -11,17 +11,19 @@ public class Info implements Serializable{
     private User user;
     private int likes_count;
     private String stream_url;
-    private String download_url;
-    private String path_to_file;
 
-    public Info(String title, int duration, User user, int likes_count, String stream_url, String download_url, String path_to_file) {
+    private String path_to_file;
+    private String artwork_url;
+
+    public Info(String title, int duration, User user, int likes_count, String stream_url, String path_to_file, String artwork_url) {
         this.title = title;
         this.duration = duration;
         this.user = user;
         this.likes_count = likes_count;
         this.stream_url = stream_url;
-        this.download_url = download_url + "?client_id=b45b1aa10f1ac2941910a7f0d10f8e28";
+
         this.path_to_file = path_to_file;
+        this.artwork_url=artwork_url;
     }
 
     public String getTitle() {
@@ -40,6 +42,10 @@ public class Info implements Serializable{
         return stream_url;
     }
 
+    public String getArtwork_url() {
+        return artwork_url;
+    }
+
     //    +"?client_id=b45b1aa10f1ac2941910a7f0d10f8e28"
     public int getLikes_count() {
 
@@ -54,9 +60,6 @@ public class Info implements Serializable{
         this.path_to_file = path_to_file;
     }
 
-    public String getDownload_url() {
-        return download_url;
-    }
 
     @Override
     public String toString() {
@@ -66,12 +69,8 @@ public class Info implements Serializable{
                 ", user=" + user +
                 ", likes_count=" + likes_count +
                 ", stream_url='" + stream_url + '\'' +
-                ", download_url='" + download_url + '\'' +
                 ", path_to_file='" + path_to_file + '\'' +
+                ", artwork_url='" + artwork_url + '\'' +
                 '}';
-    }
-
-    public void setDownload_url(String download_url) {
-        this.download_url = download_url;
     }
 }
